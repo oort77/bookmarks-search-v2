@@ -25,8 +25,7 @@ warnings.filterwarnings('ignore')
 
 
 # Read Bookmarks file into JSON
-bookmarks_path = '/users/gm/Library/Application \
-Support/BraveSoftware/Brave-Browser/Default/Bookmarks'
+bookmarks_path = st.secrets["bookmarks_path"]['path']
 
 with open(bookmarks_path, 'r') as json_file:
     data = json.loads(json_file.read())
@@ -66,10 +65,7 @@ with open('./data/json_list_depth.pickle', 'wb') as q:
 # SCRAPING PART BEGIN =========================================================
 fasttext.FastText.eprint = lambda x: None
 model = fasttext.load_model('./data/lid.176.ftz')
-headers = {
-    'User-Agent':
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) \AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-}
+headers = {'User-Agent': st.secrets["user_agent"]}
 
 df = scraper(df, model=model, headers=headers)
 print('\nScraping completed...\n')

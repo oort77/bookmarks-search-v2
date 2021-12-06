@@ -10,7 +10,6 @@
 import os
 from datetime import datetime
 import streamlit as st
-# import psycopg2
 import pickle
 import fasttext
 from df_to_sql import *

@@ -10,16 +10,14 @@
 import time
 import pandas as pd
 from bs4 import BeautifulSoup
+import streamlit as st
 import requests
 import re
 import warnings
 
 warnings.filterwarnings('ignore')
 
-headers = {
-    'User-Agent':
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-}
+headers = {'User-Agent': st.secrets["user_agent"]}
 
 def get_txt(url:str, headers: dict):
     try:
@@ -46,3 +44,5 @@ def scraper(dataf: pd.DataFrame, model, headers: dict) -> pd.DataFrame:
             counter += 1
             print(counter, row['url'][:50])
     return dataf
+
+# %%
