@@ -152,7 +152,7 @@ if update_db:
     os.system('afplay ./sounds/gagarin_poehali.mov')
 
     if full_update:
-        print('\nStarting full database update...')
+        print('\n\nStarting full database update...')
         os.system("python full_update_db.py &")
     else:
         os.system("python part_update_db.py &")

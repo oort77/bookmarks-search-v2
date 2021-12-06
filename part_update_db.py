@@ -79,7 +79,7 @@ guids = dfx['guid'].to_list()
 
 # Select newly added bookmarks
 dfn = df.loc[~df['guid'].isin(guids)]
-print(f'\nPreparing to insert {dfn.shape[0]} new records...\n')
+print(f'\nPreparing to insert {dfn.shape[0]} new record(s)...\n')
 
 # NEW BOOKMARKS PART END =======================================================
 # %%
@@ -117,7 +117,8 @@ if dfn.shape[0] > 0:
 
     conn.close()
 else:
-    os.system("say 'Velma you says? No new bookmarks, no hooch, no gals no nothing... Just the scram white boy, just scram'")
+    # os.system("say 'Velma you says? No new bookmarks, no hooch, no gals no nothing... Just the scram white boy, just scram'")
+    os.system('afplay ./sounds/no_hooch.mov')
     print('\nNo new bookmarks since last update\n')
     
 # SQLite PART END ==============================================================
