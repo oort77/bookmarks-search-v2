@@ -1,0 +1,14 @@
+blacklist = [ 
+'www.cmegroup.com',
+'www.mql5.com',
+'www.cbr.ru',
+'weekend.rbcdaily.ru', 
+'bookerwealth.com',
+'www.thefreecelebritymoviearchive.com',
+'netflix.com',
+'www.yetisports.org',
+'support.mdl.ru',
+'192.168.1.64',
+'192.168.1.75',
+'www.bookerwealth.com' 
+]
