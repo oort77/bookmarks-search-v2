@@ -2,10 +2,10 @@
 
 1.	Install all Python packages from requrements.txt
 2.	Create PostgreSQL database
-3.	Open file .streamlit/secrets.toml in project folder
-	a. Fill PostgreSQL connection credentials in the ["postgres"] section
-	b. Edit the ["bookmarks_path"] section with the path to your Chrome
-		browser bookmarks
+3.	Open file .streamlit/secrets.toml in project folder:  
+	- fill PostgreSQL connection credentials in the ["postgres"] section  
+	- edit the ["bookmarks_path"] section with the path to your Chrome
+	  browser bookmarks
 
 **Operation**
 
