@@ -57,18 +57,6 @@ with st.sidebar.expander("Keep it fresh", expanded=False):
     update_db = st.button(
         'Update database', help='Update may take a while')
 
-
-# # Display last updated info
-# with open('./data/last_updated.pickle', 'rb') as f:
-#     last_updated = pickle.load(f)
-# date_last_updated = last_updated.strftime('%-d %b %Y')
-# st.sidebar.write(f'Last updated on {date_last_updated}')
-
-# # Database update widgets
-# full_update = st.sidebar.checkbox('Full update')
-# update_db = st.sidebar.button(
-#     'Update database', help='Update may take a while')
-
 # Set up input field for search phrase
 search_text = st.text_input(label='')
 
