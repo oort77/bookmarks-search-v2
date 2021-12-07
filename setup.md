@@ -15,11 +15,13 @@ In your Terminal cd to project folder and type
 
 The search page opens in your browser.
 
-Check "Full update" box in the left bottom part of the page and
-press "Update" button. Search database generation may take a while.
+Expand "Keep it fresh" section in the left sidebar. 
+Check "Full update" box and press "Update" button. 
+Search database generation may take a while.
 
-You may choose to do partial updates from time to time: press
-"Update" button with clear "Full update" box. Partial updates are 
-much faster, as only the new bookmarks are scraped.
+You may choose to do partial updates from time to time: 
+press "Update" button with clear "Full update" box. 
+Partial updates are much faster, as only the new 
+bookmarks are scraped.
 
 Checked with python versions 3.8 and 3.9.
