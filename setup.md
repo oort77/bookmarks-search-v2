@@ -18,7 +18,7 @@ The search page opens in your browser.
 Expand "Keep it fresh" section in the left sidebar. Check "Full update" box and  
 press "Update" button. Search database generation may take a while.  
 
-You may choose to do partial updates from time to time - press "Update" button 
+You may choose to do partial updates from time to time - press "Update" button    
 with clear "Full update" box. Partial updates are much faster, as only the new   
 bookmarks are scraped.  
 
