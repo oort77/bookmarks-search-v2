@@ -46,16 +46,28 @@ num_chars = st.sidebar.number_input(
 st.sidebar.markdown('<hr>', unsafe_allow_html=True)
 st.sidebar.image('./images/filler.png', use_column_width=True)
 
-# Display last updated info
-with open('./data/last_updated.pickle','rb') as f:
-    last_updated = pickle.load(f)
-date_last_updated = last_updated.strftime('%-d %b %Y')
-st.sidebar.write(f'Last updated on {date_last_updated}')
+with st.sidebar.expander("Keep it fresh", expanded=False):
+    # Display last updated info
+    with open('./data/last_updated.pickle', 'rb') as f:
+        last_updated = pickle.load(f)
+        date_last_updated = last_updated.strftime('%-d %b %Y')
+        st.write(f'Last updated on {date_last_updated}')
+    # Database update widgets
+    full_update = st.checkbox('Full update')
+    update_db = st.button(
+        'Update database', help='Update may take a while')
 
-# Database update widgets
-full_update = st.sidebar.checkbox('Full update')
-update_db = st.sidebar.button(
-    'Update database', help='Update may take a while')
+
+# # Display last updated info
+# with open('./data/last_updated.pickle', 'rb') as f:
+#     last_updated = pickle.load(f)
+# date_last_updated = last_updated.strftime('%-d %b %Y')
+# st.sidebar.write(f'Last updated on {date_last_updated}')
+
+# # Database update widgets
+# full_update = st.sidebar.checkbox('Full update')
+# update_db = st.sidebar.button(
+#     'Update database', help='Update may take a while')
 
 # Set up input field for search phrase
 search_text = st.text_input(label='')
@@ -84,8 +96,9 @@ for char in search_text:
 # Load json_list depth from pickle
 with open('./data/json_list_depth.pickle', 'rb') as f:
     depth = pickle.load(f)
+
 # Change to range(depth-6, depth-3) to see the last subfolder as well // folder2, folder3
-folders_list = ['folder' + str(i) for i in range(depth-6, depth-4)] 
+folders_list = ['folder' + str(i) for i in range(depth-6, depth-4)]
 folders = ', '.join(folders_list)
 
 search_query = f"""
@@ -129,11 +142,12 @@ try:
         st.error('No results found')
 
     for row in rows:
-# TODO: make field count dependent of json_list depth
+        # TODO: make field count dependent of json_list depth
         st.markdown(f'**{row[2]}** <br>[{row[1]}]({row[1]})  \
                     <br>Rank {round(row[3]*100)}{spacer}  \
                     Added on {getFiletime(row[0])}{spacer}  \
-                    Tags:&nbsp;&nbsp;{row[depth-3]}  >  {row[depth-2]}', unsafe_allow_html=True)
+                    Tags:&nbsp;&nbsp;{row[depth-3]}  >  {row[depth-2]}',  \
+                        unsafe_allow_html=True)
 
         st.markdown(f'{row[4][:num_chars]}<hr>', unsafe_allow_html=True)
 
@@ -147,7 +161,7 @@ except Exception as error:
 # DATABASE UPDATE PART BEGIN ===================================================
 
 if update_db:
-    
+
     os.system('afplay ./sounds/gagarin_poehali.mov')
 
     if full_update:
@@ -156,9 +170,9 @@ if update_db:
     else:
         os.system("python part_update_db.py &")
         print('\nStarting partial database update...')
-    # Save update time to pickle    
+    # Save update time to pickle
     last_updated = datetime.now()
-    with open('./data/last_updated.pickle','wb') as f:
+    with open('./data/last_updated.pickle', 'wb') as f:
         pickle.dump(last_updated, f)
 
 
