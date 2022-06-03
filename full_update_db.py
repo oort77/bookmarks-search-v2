@@ -23,93 +23,103 @@ from helpers import *
 
 warnings.filterwarnings('ignore')
 
-
-# Read Bookmarks file into JSON
-bookmarks_path = st.secrets["bookmarks_path"]['path']
-
-with open(bookmarks_path, 'r') as json_file:
-    data = json.loads(json_file.read())
 # %%
 # JSON PARSING PART BEGIN ======================================================
-
 # Turn JSON into list of lists
-json_list = get_json_list(data)
+
+
+def json_to_list() -> list:
+
+    # Read Bookmarks file into JSON
+    bookmarks_path = st.secrets["bookmarks_path"]['path']
+
+    with open(bookmarks_path, 'r') as json_file:
+        data = json.loads(json_file.read())
+
+    json_list = get_json_list(data)
 
 # Clean meta_info records
-[json_list.remove(row) for row in json_list if pt(
-    row, -1) == 'last_visited_desktop']
+    [json_list.remove(row) for row in json_list if pt(
+        row, -1) == 'last_visited_desktop']
 
 # Read JSON into dataframe
-df = pd.DataFrame()
-df = (df.pipe(
-    start_pipeline, json_list)
-    .pipe(fill_df, json_list)
-    .pipe(clean_df))
+    df = pd.DataFrame()
+    df = (df.pipe(
+        start_pipeline, json_list)
+        .pipe(fill_df, json_list)
+        .pipe(clean_df)
+    )
 
 # Save df to pickle
-with open('./data/df_.pickle', 'wb') as p:
-    pickle.dump(df, p)
+    with open('./data/df_.pickle', 'wb') as p:
+        pickle.dump(df, p)
 
 # Save json_list depth to pickle
-with open('./data/json_list_depth.pickle', 'wb') as q:
-    pickle.dump(list_depth(json_list), q)
+    with open('./data/json_list_depth.pickle', 'wb') as q:
+        pickle.dump(list_depth(json_list), q)
 
-# JSON PARSING PART END =======================================================
-# %%
-# TESTING PART BEGIN ==========================================================
+    return df
+    # return df[:5]
 
-# df = df[:25]
-
-# TESTING PART END ============================================================
+# JSON PARSING PART END ========================================================
 # %%
 # SCRAPING PART BEGIN =========================================================
-fasttext.FastText.eprint = lambda x: None
-model = fasttext.load_model('./data/lid.176.ftz')
-headers = {'User-Agent': st.secrets["user_agent"]}
+def scrape_to_sql(df: pd.DataFrame) -> str: 
+    
+    fasttext.FastText.eprint = lambda x: None
+    model = fasttext.load_model('./data/lid.176.ftz')
 
-df = scraper(df, model=model, headers=headers)
-print('\nScraping completed...\n')
+    headers = {'User-Agent': st.secrets["user_agent"]["agent"]}
 
-# Save df to pickle
-with open('./data/df.pickle', 'wb') as p:
-    pickle.dump(df, p)
+# Scrape bookmarks
+    df = scraper(df, model=model, headers=headers)
+    print('Scraping completed')
+    
 # SCRAPING PART END ===========================================================
 # %%
 # SQLite PART BEGIN ===========================================================
+# Save json_list depth to pickle
+    with open('./data/json_list_depth.pickle', 'rb') as q:
+        depth = pickle.load(q)
 
-depth = list_depth(json_list)
-folders_list = [', folder' + str(i) + ' VARCHAR(100)' for i in range(depth-3)]
-folders = ''.join(folders_list)
+    folders_list = [', folder' + str(i) + ' VARCHAR(100)' for i in range(depth-3)]
+    folders = ''.join(folders_list)
 
-create_table_query = f"""
-CREATE TABLE IF NOT EXISTS bookmarks (
-    date_added BIGINT,
-    guid VARCHAR(36) UNIQUE,
-    name VARCHAR(250),
-    url VARCHAR,
-    body TEXT,
-    lang VARCHAR(20)
-    {folders}
-);
-CREATE INDEX IF NOT EXISTS gine ON bookmarks 
-USING gin(to_tsvector('english', body));
-CREATE INDEX IF NOT EXISTS ginr ON bookmarks 
-USING gin(to_tsvector('russian', body));
-"""
+    create_table_query = f"""
+    CREATE TABLE IF NOT EXISTS bookmarks (
+        date_added BIGINT,
+        guid VARCHAR(36) UNIQUE,
+        name VARCHAR(250),
+        url VARCHAR,
+        body TEXT,
+        lang VARCHAR(20)
+        {folders}
+    );
+    CREATE INDEX IF NOT EXISTS gine ON bookmarks 
+    USING gin(to_tsvector('english', body));
+    CREATE INDEX IF NOT EXISTS ginr ON bookmarks 
+    USING gin(to_tsvector('russian', body));
+    """
 
-print('Connecting to the PostgreSQL database...')
-conn = connect()
-print("\nConnection successful")
+    conn = connect()
+    
+    with conn.cursor() as cur:
+        cur.execute(create_table_query)
 
+    execute_sql_batch(conn, df)
 
-with conn.cursor() as cur:
-    cur.execute(create_table_query)
+    conn.commit()
+    os.system('afplay ./sounds/eagle_has_landed.mov')
+    conn.close()
+    
+    # SQLite PART END =============================================================
+# %%
 
-execute_batch(conn, df)  # , 'bookmarks')
-
-conn.commit()
-os.system('afplay ./sounds/eagle_has_landed.mov')
-conn.close()
-
-# SQLite PART END =============================================================
+def full_update(): 
+    df = json_to_list()
+    # Save df to pickle
+    with open('./data/df.pickle', 'wb') as p:
+        pickle.dump(df, p)
+    scrape_to_sql(df)
+    
 # %%

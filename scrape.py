@@ -17,7 +17,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-headers = {'User-Agent': st.secrets["user_agent"]}
+headers = {'User-Agent': st.secrets["user_agent"]["agent"]}
 
 def get_txt(url:str, headers: dict):
     try:
@@ -28,7 +28,7 @@ def get_txt(url:str, headers: dict):
         text = t.replace("\x00", "\uFFFD")
 
     except requests.ConnectionError as exception:
-        print(f'Connection error! \n {exception}')
+        print(f'Connection error! {exception}')
         text = ''
     return text
 
@@ -40,9 +40,9 @@ def scraper(dataf: pd.DataFrame, model, headers: dict) -> pd.DataFrame:
             row['body'] = get_txt(row['url'], headers)[:1000000]
             lang = model.predict(row['body'], k=1)[0][0][-2:]
             row['lang'] = 'russian' if lang == 'ru' else 'english'
-            time.sleep(0.3)
+            time.sleep(0.2)
             counter += 1
-            print(counter, row['url'][:50])
+            print(counter, row['url'][:30]+'..')
     return dataf
 
 # %%

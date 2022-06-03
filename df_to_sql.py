@@ -19,8 +19,8 @@ import sys
 # Establish connection to SQL db
 
 def connect():
+    
     conn = None
-
     try:
         # connect to the PostgreSQL server
         # conn = psycopg2.connect(**params_dic)
@@ -37,15 +37,11 @@ def connect():
 # Insert df in SQL db
 
 
-def execute_batch(conn, df: pd.DataFrame, page_size: int = 100): #table: str,
-    """
-    Using psycopg2.extras.execute_batch() to insert the dataframe
-    """
+def execute_sql_batch(conn, df: pd.DataFrame, page_size: int = 100)->str: #status: str,
+    
     # Create a list of tuples from the dataframe values
     tuples = [tuple(x) for x in df.to_numpy()]
 
-    # db_cols = ['date_added', 'guid', 'name', 'url',  'body', 'lang',
-    #            'folder0', 'folder1', 'folder2', 'folder3', 'folder4']
     db_cols = df.columns
     
     # SQL query to execute
@@ -56,18 +52,26 @@ def execute_batch(conn, df: pd.DataFrame, page_size: int = 100): #table: str,
             ON CONFLICT (guid) DO NOTHING
             """
     cur = conn.cursor()
-
+    
     try:
         extras.execute_batch(cur, query, tuples, page_size)
         conn.commit()
+        # status = 'Update completed'
+        print('SQL batch Update completed')
+        # print(f'df_to_sql status = {status}')
 
     except (Exception, psycopg2.DatabaseError) as error:
         print("Error: %s" % error)
         conn.rollback()
         cur.close()
+        # status = 'Update failed'
+        print('Update failed')
 
-    print("\nDataframe fetched to SQL...")
+    # print("Dataframe fetched to SQL")
 
     cur.close()
 
+    # return status
 # END SQL PART =================================================================
+
+# %%

@@ -21,7 +21,7 @@ def start_pipeline(dataf: pd.DataFrame, json_list: list) -> pd.DataFrame:  # = j
     folder_cols = ['folder' + str(i) for i in range(list_depth(json_list) - 3)]
     cols = perm_cols + folder_cols
     dataf = pd.DataFrame(columns=cols)
-    print('\nPipeline started...')
+    print('Pipeline started')
     return dataf
 
 
@@ -35,7 +35,7 @@ def fill_df(dataf: pd.DataFrame, json_list: list) -> pd.DataFrame:  # = json_lis
             for fn in range(list_depth(json_list) - 3):
                 dataf.loc[i, 'folder'+str(fn)] = fetch_val(stem(s, l - fn-3) + '.name', json_list) if (
                     fetch_val(stem(s, l - fn - 3) + '.type', json_list) != 'url') else None
-    print('Dataframe filled...')
+    print('Dataframe filled')
     return dataf
 
 
@@ -49,5 +49,5 @@ def clean_df(dataf: pd.DataFrame) -> pd.DataFrame:
     dataf = dataf.loc[dataf['url'].apply(exclude_blacklisted_domain)]
     # Reset index
     dataf.reset_index(drop=True, inplace=True)
-    print('Dataframe cleaned...\n')
+    print('Dataframe cleaned')
     return dataf

@@ -12,6 +12,8 @@ from datetime import datetime
 import streamlit as st
 import pickle
 import fasttext
+from full_update_db import full_update
+from part_update_db import part_update
 from df_to_sql import *
 from helpers import *
 
@@ -22,14 +24,23 @@ fasttext.FastText.eprint = lambda x: None
 # STREAMLIT PART BEGIN =========================================================
 
 # Init srteamlit
-st.set_page_config(page_title='Brave bookmarks search',
-                   page_icon='images/icon_search.ico',
-                   layout='centered',
-                   initial_sidebar_state='collapsed')
+st.set_page_config(page_title="Brave bookmarks search",
+                   page_icon="./images/icon_search.png",
+                   layout="centered",
+                   initial_sidebar_state="collapsed")
+
+# Remove extra padding on the search web page
+padding = 0
+st.markdown(f""" <style>
+    .reportview-container .main .block-container{{
+        padding-top: {padding}rem;
+        padding-right: {padding}rem;
+        padding-left: {padding}rem;
+        padding-bottom: {padding}rem;
+    }} </style> """, unsafe_allow_html=True)
 
 st.image('./images/header.png')
 # %%
-
 # Set up input for search language and output format in sidebar
 ru_search = st.sidebar.checkbox('Search in Russian')
 
@@ -44,8 +55,9 @@ num_chars = st.sidebar.number_input(
 
 # Vertical spacing in sidebar
 st.sidebar.markdown('<hr>', unsafe_allow_html=True)
-st.sidebar.image('./images/filler.png', use_column_width=True)
+st.sidebar.image('./images/filler.png', use_column_width='Always')
 
+# Database update section
 with st.sidebar.expander("Keep it fresh", expanded=False):
     # Display last updated info
     with open('./data/last_updated.pickle', 'rb') as f:
@@ -53,7 +65,7 @@ with st.sidebar.expander("Keep it fresh", expanded=False):
         date_last_updated = last_updated.strftime('%-d %b %Y')
         st.write(f'Last updated on {date_last_updated}')
     # Database update widgets
-    full_update = st.checkbox('Full update')
+    full_update_checked = st.checkbox('Full update')
     update_db = st.button(
         'Update database', help='Update may take a while')
 
@@ -109,7 +121,6 @@ search_query = f"""
                 """
 # %%
 # Connect to the PostgreSQL database server
-
 conn = connect()
 
 # Render search result
@@ -149,17 +160,26 @@ except Exception as error:
 # DATABASE UPDATE PART BEGIN ===================================================
 
 if update_db:
-
+    st.sidebar.empty()
     os.system('afplay ./sounds/gagarin_poehali.mov')
 
-    if full_update:
-        print('\n\nStarting full database update...')
-        os.system("python full_update_db.py &")
+    if full_update_checked:
+        
+        with st_stdout("code"):    
+            print('Starting full update')
+            # os.system("python full_update_db.py &")
+        full_update()
+            
     else:
-        os.system("python part_update_db.py &")
-        print('\nStarting partial database update...')
+        
+        with st_stdout("code"):
+            print('Starting partial update')
+            # os.system("python part_update_db.py &")            
+            part_update()
+        
     # Save update time to pickle
     last_updated = datetime.now()
+    
     with open('./data/last_updated.pickle', 'wb') as f:
         pickle.dump(last_updated, f)
 
