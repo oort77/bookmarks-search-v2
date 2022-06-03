@@ -24,7 +24,6 @@ Search can be "limited" to Russian, although the engine recognizes the language 
 **Updating database**
 
 Database must be updated manually. Widget ```Keep it fresh``` is located in the lower part of the left pane.
-
 Both partial and full updates are supported. Please note that update may take a while if you have many bookmarks.
 
 **Working environment**
