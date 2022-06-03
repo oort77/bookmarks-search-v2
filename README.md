@@ -5,7 +5,7 @@ Brave search solves the problem of finding relevant content in your bowser's boo
    
 **Configuration and setup**    
 
-The system requres a PostgreSQL database engine to be installed and configured. Path to your browser's bookmarks file has to be specified as well in ```.streamlit/secrets.toml```.
+The system requres a PostgreSQL database engine to be installed and configured. Path to your browser's bookmarks file has to be specified as well in ```.streamlit/secrets.toml```. Refer to ```setup.md```
 
 If you wish to block certain sites from being parsed, include them in ```black_list.toml```.
 
