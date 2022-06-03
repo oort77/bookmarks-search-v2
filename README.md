@@ -29,7 +29,8 @@ Both partial and full updates are supported. Please note that update may take a 
 
 **Working environment**
 
-The system has been tested on Mac OS 10.14.6, Python 3.8 with PostgreSQL server 12.11 running on Ubuntu 22.04.  
+The system has been tested on Mac OS 10.14.6, Python 3.8 with PostgreSQL server 12.11 running on Ubuntu 22.04. 
+PostgreSQL can rbe installed and run on the same compyter, there is no need for a separate dedicated server.
 
 The only Mac specific feature is voice notifications, can be commented out.
 
